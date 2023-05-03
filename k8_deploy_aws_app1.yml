@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app1
+  labels:
+    app: app1-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app1-app
+  template:
+    metadata:
+      labels:
+        app: app1-app
+    spec:
+      containers:
+        - name: app1-container
+          image: rgupta87/myapp1:latest
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app1-app-svc
+  annotations:
+    alb.ingress.kubernetes.io/healthcheck-path: /healthCheck
+spec:
+  type: NodePort
+  selector:
+    app: app1-app
+  ports:
+    - port: 5000
+      targetPort: 5000
